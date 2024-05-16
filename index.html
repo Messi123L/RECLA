@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Réclamations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Gestion des Réclamations</h1>
+    </header>
+    <main>
+        <section id="submit-form">
+            <h2>Soumettre une Réclamation</h2>
+            <form id="claim-form" action="#" method="post">
+                <label for="title">Titre :</label>
+                <input type="text" id="title" name="title" required>
+                
+                <label for="description">Description :</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+
+                <label for="phone">Numéro de Téléphone :</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="screenshot">Capture d'écran :</label>
+                <input type="file" id="screenshot" name="screenshot" accept="image/*">
+                
+                <button type="submit">Soumettre</button>
+            </form>
+        </section>
+        <section id="claim-list">
+            <h2>Liste des Réclamations</h2>
+            <ul>
+                <!-- Contenu de la liste des réclamations -->
+            </ul>
+          
+            
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Gestion des Réclamations. Tous droits réservés.</p>
+    </footer>
+    
+    <script src="./script.js"></script>
+</body>
+</html>
