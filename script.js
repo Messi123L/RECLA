@@ -4,6 +4,24 @@ const claimForm = document.querySelector('#claim-form');
 // Sélection de la liste des réclamations
 const claimList = document.querySelector('#claim-list ul');
 
+// Fonction pour ajouter une réclamation à Firebase
+function addClaimToFirestore(title, description, phone, screenshot) {
+    // Ici, vous pouvez ajouter votre code pour envoyer les données à Firestore
+    // Par exemple :
+    // firebase.firestore().collection('reclamations').add({
+    //     title: title,
+    //     description: description,
+    //     phone: phone,
+    //     screenshot: screenshot,
+    // })
+    // .then((docRef) => {
+    //     console.log("Document written with ID: ", docRef.id);
+    // })
+    // .catch((error) => {
+    //     console.error("Error adding document: ", error);
+    // });
+}
+
 // Écouteur d'événement pour la soumission du formulaire
 claimForm.addEventListener('submit', function(event) {
     event.preventDefault(); // Empêche la soumission par défaut du formulaire
@@ -29,6 +47,7 @@ claimForm.addEventListener('submit', function(event) {
         <p><strong>Capture d'écran :</strong> <img src="${URL.createObjectURL(screenshot)}" alt="Capture d'écran"></p>
         <button class="edit-button">Modifier</button>
         <button class="delete-button">Supprimer</button>
+        <button class="send-to-firebase-button">Envoyer</button>
     `;
 
     // Ajout d'un écouteur d'événement pour le clic sur le bouton de modification
@@ -69,6 +88,12 @@ claimForm.addEventListener('submit', function(event) {
     // Ajout d'un écouteur d'événement pour le clic sur le bouton de suppression
     listItem.querySelector('.delete-button').addEventListener('click', function() {
         listItem.remove();
+    });
+
+    // Ajout d'un écouteur d'événement pour le clic sur le bouton "Envoyer à Firebase"
+    listItem.querySelector('.send-to-firebase-button').addEventListener('click', function() {
+        // Envoie les données à Firestore
+        addClaimToFirestore(title, description, phone, screenshot);
     });
 
     // Ajout de l'élément de liste à la liste des réclamations

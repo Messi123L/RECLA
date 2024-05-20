@@ -4,7 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Réclamations</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      #submit-form, #claim-list {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      input[type="file"] {
+        margin-bottom: 10px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #555;
+      }
+
+      footer {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
 </head>
 <body>
     <header>
@@ -13,7 +95,7 @@
     <main>
         <section id="submit-form">
             <h2>Soumettre une Réclamation</h2>
-            <form id="claim-form" action="#" method="post">
+            <form id="claim-form">
                 <label for="title">Titre :</label>
                 <input type="text" id="title" name="title" required>
                 
@@ -26,22 +108,94 @@
                 <label for="screenshot">Capture d'écran :</label>
                 <input type="file" id="screenshot" name="screenshot" accept="image/*">
                 
-                <button type="submit">Soumettre</button>
+                <button type="submit" id="submit">Soumettre</button>
             </form>
         </section>
         <section id="claim-list">
             <h2>Liste des Réclamations</h2>
-            <ul>
+            <ul id="claim-list-ul">
                 <!-- Contenu de la liste des réclamations -->
             </ul>
-          
-            
         </section>
     </main>
     <footer>
         <p>&copy; 2024 Gestion des Réclamations. Tous droits réservés.</p>
     </footer>
-    
-    <script src="./script.js"></script>
+    <script type="module">
+      // Importation des modules Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getDatabase, ref, set, get, child, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+      // Votre configuration Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0U9HAXMf9v5Mke9lEwics2kdivkQoKi8",
+        authDomain: "auth-c5c8c.firebaseapp.com",
+        databaseURL: "https://auth-c5c8c-default-rtdb.firebaseio.com",
+        projectId: "auth-c5c8c",
+        storageBucket: "auth-c5c8c.appspot.com",
+        messagingSenderId: "1096852236841",
+        appId: "1:1096852236841:web:1f38f53662695fe24cca38"
+      };
+
+      // Initialisez Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      document.getElementById("submit").addEventListener("click", function(e) {
+        e.preventDefault();
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const phone = document.getElementById("phone").value;
+        const screenshot = document.getElementById("screenshot").files[0];
+
+        const claimsRef = ref(db, 'claims');
+        get(claimsRef).then((snapshot) => {
+          const claims = snapshot.val();
+          const newId = claims ? Object.keys(claims).length + 1 : 1; // Calculate new ID
+
+          set(ref(db, 'claims/' + newId), {
+            id: newId,
+            title: title,
+            description: description,
+            phone: phone,
+            screenshot: screenshot ? screenshot.name : ''
+          }).then(() => {
+            alert("Réclamation soumise avec succès !");
+            loadClaims(); // Recharger les réclamations après soumission
+          }).catch((error) => {
+            console.error("Erreur lors de la soumission :", error);
+          });
+        }).catch((error) => {
+          console.error("Erreur lors de la récupération des réclamations :", error);
+        });
+      });
+
+      function loadClaims() {
+        const claimsRef = ref(db, 'claims');
+        get(claimsRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            const claims = snapshot.val();
+            const claimsList = document.getElementById("claim-list-ul");
+            claimsList.innerHTML = ""; // Clear existing list
+
+            for (const key in claims) {
+              if (claims.hasOwnProperty(key)) {
+                const claim = claims[key];
+                const listItem = document.createElement("li");
+                listItem.textContent = `ID : ${claim.id}, Titre : ${claim.title}, Description : ${claim.description}, Téléphone : ${claim.phone}`;
+                claimsList.appendChild(listItem);
+              }
+            }
+          } else {
+            console.log("Aucune réclamation trouvée.");
+          }
+        }).catch((error) => {
+          console.error("Erreur lors de la récupération des réclamations :", error);
+        });
+      }
+
+      // Charger les réclamations à l'initialisation
+      loadClaims();
+    </script>
 </body>
 </html>

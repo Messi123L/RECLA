@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'Administration</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      #admin-claims {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
+
+      footer {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Page d'Administration</h1>
+    </header>
+    <main>
+        <section id="admin-claims">
+            <h2>Réclamations</h2>
+            <ul id="admin-claims-list">
+                <!-- Les réclamations seront affichées ici -->
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Page d'Administration. Tous droits réservés.</p>
+    </footer>
+    
+    <script type="module">
+      // Importation des modules Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+      // Votre configuration Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0U9HAXMf9v5Mke9lEwics2kdivkQoKi8",
+        authDomain: "auth-c5c8c.firebaseapp.com",
+        databaseURL: "https://auth-c5c8c-default-rtdb.firebaseio.com",
+        projectId: "auth-c5c8c",
+        storageBucket: "auth-c5c8c.appspot.com",
+        messagingSenderId: "1096852236841",
+        appId: "1:1096852236841:web:1f38f53662695fe24cca38"
+      };
+
+      // Initialisez Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      // Fonction pour charger les réclamations depuis Firebase
+      function loadAdminClaims() {
+        const claimsRef = ref(db, 'claims');
+        get(claimsRef).then((snapshot) => {
+          const claims = snapshot.val();
+          const adminClaimsList = document.getElementById("admin-claims-list");
+          adminClaimsList.innerHTML = ""; // Clear existing list
+
+          for (const key in claims) {
+            if (claims.hasOwnProperty(key)) {
+              const claim = claims[key];
+              const listItem = document.createElement("li");
+              listItem.textContent = `ID : ${key}, Titre : ${claim.title}, Description : ${claim.description}, Téléphone : ${claim.phone}`;
+              adminClaimsList.appendChild(listItem);
+            }
+          }
+        }).catch((error) => {
+          console.error("Erreur lors de la récupération des réclamations :", error);
+        });
+      }
+
+      // Fonction pour ajouter une nouvelle réclamation
+      function addClaim(title, description, phone) {
+        const claimsRef = ref(db, 'claims');
+        get(claimsRef).then((snapshot) => {
+          const claims = snapshot.val();
+          const newId = claims ? Object.keys(claims).length + 1 : 1; // Calculate the new ID
+          const newClaimRef = ref(db, 'claims/' + newId);
+          set(newClaimRef, {
+            title: title,
+            description: description,
+            phone: phone
+          }).then(() => {
+            loadAdminClaims(); // Reload claims after adding
+          }).catch((error) => {
+            console.error("Erreur lors de l'ajout de la réclamation :", error);
+          });
+        }).catch((error) => {
+          console.error("Erreur lors de la récupération des réclamations :", error);
+        });
+      }
+
+      // Exemple d'ajout d'une nouvelle réclamation
+      // addClaim("Titre de la réclamation", "Description de la réclamation", "0123456789");
+
+      // Chargez les réclamations à l'initialisation de la page admin
+      loadAdminClaims();
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'administration</title>
+    <style>
+        /* Styles CSS pour le formulaire */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        form {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form id="loginForm" onsubmit="return validateForm()"   oncontextmenu="return false;">
+        <h2>Connexion</h2>
+        <label for="username">Nom d'utilisateur:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required>
+        <input type="submit" value="Se connecter">
+        <p id="errorMessage" class="error"></p>
+    </form>
+
+    <script>
+        function validateForm() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var errorMessage = document.getElementById("errorMessage");
+
+            if (username === "" || password === "") {
+                errorMessage.textContent = "Veuillez remplir tous les champs.";
+                return false;
+            }
+
+            // Simuler la sécurisation du mot de passe (ne pas utiliser en production)
+            var hashedPassword = hashPassword(password); // Utilisez une fonction de hachage sécurisée dans un environnement backend
+
+            // Vérification des identifiants (remplacer avec vos propres vérifications)
+            var adminUsername = "admin";
+            var adminPasswordHash = hashPassword("motdepasseadmin"); // Hash du mot de passe admin
+
+            if (username !== adminUsername || hashedPassword !== adminPasswordHash) {
+                errorMessage.textContent = "Nom d'utilisateur ou mot de passe incorrect.";
+                return false;
+            }
+
+            // Redirection vers la page d'administration
+            window.location.href = "administrateur.html";
+            return false;
+        }
+
+        // Fonction de hachage simple (à ne pas utiliser en production)
+        function hashPassword(password) {
+            // Ici, vous pouvez implémenter une fonction de hachage comme SHA-256
+            // Pour cet exemple, nous utilisons simplement une concaténation du mot de passe avec un préfixe
+            return "hashed_" + password; // Cette méthode est très peu sécurisée, ne l'utilisez pas en production
+        }
+        window.addEventListener("keydown", function(e) {
+    if (e.keyCode == 123) { // 123 est le code pour la touche F12
+        alert("F12 est désactivé");
+        e.preventDefault();
+    }
+});
+
+    </script>
+</bo>
+</html>
